@@ -5,6 +5,7 @@
 #include <vector>
 #include <sstream>
 #include <iomanip>
+#include <fstream>
 
 #define rightRotate(x, n) ((x>>n)|(x<<((sizeof(x)<<3)-n)))
 
@@ -111,19 +112,25 @@ std::string hash512(std::string msg_param){
 
 }
 
-int main(void){
-    //std::string inputMsg("a");
+int main(int argc, char *argv[]){
+    std::string filename(argv[1]);
+    std::cout << "Opening: " << filename << std::endl;
 
-    std::string inputMsg("");
-    for(int i = 0; i < 100000000;i++){
-        inputMsg.append("a");
-    }
+	std::ifstream input(filename, std::ios::binary);
 
-    std::cout << "Input: " << std::endl;
-    //std::cout << inputMsg << std::endl;
-    std::cout << "Output: " << std::endl;
-    std::string output = hash512(inputMsg);
-    //std::cout << output << std::endl;
+	// copies all data into buffer
+	std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+
+	// prints buffer to console
+	std::string s, msg;
+	for (auto const& s : buffer) { msg += s; }
+
+    std::cout << "Hashing " << msg.length() << " bytes of data...." << std::endl;
+
+
+    std::string output = hash512(msg);
+    std::cout << "--- OUTPUT HASH BELOW ---" << std::endl;
+    std::cout << output << std::endl;
 
     return 0;
 }
